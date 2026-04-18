@@ -7,8 +7,8 @@ def call(Map config = [:]) {
     def imageTag = config.imageTag ?: error("Image tag is required")
     def manifestsPath = config.manifestsPath ?: 'kubernetes'
     def gitCredentials = config.gitCredentials ?: 'github-credentials'
-    def gitUserName = config.gitUserName ?: 'Jenkins CI'
-    def gitUserEmail = config.gitUserEmail ?: 'jenkins@example.com'
+    def gitUserName = config.gitUserName ?: 'Ajay Singh'
+    def gitUserEmail = config.gitUserEmail ?: 'singhajay210208@gmail.com'
     
     echo "Updating Kubernetes manifests with image tag: ${imageTag}"
     
@@ -23,19 +23,19 @@ def call(Map config = [:]) {
             git config user.email "${gitUserEmail}"
         """
         
-        // Update deployment manifests with new image tags - using proper Linux sed syntax
+        // Update deployment manifests with new image tags
         sh """
-            # Update main application deployment - note the correct image name is iemafzal/easyshop-app
-            sed -i "s|image: iemafzal/easyshop-app:.*|image: iemafzal/easyshop-app:${imageTag}|g" ${manifestsPath}/08-easyshop-deployment.yaml
+            # Update main application deployment
+            sed -i "s|image: .*|image: singhajay210/easyshop-app:${imageTag}|g" ${manifestsPath}/08-easyshop-deployment.yaml
             
             # Update migration job if it exists
             if [ -f "${manifestsPath}/12-migration-job.yaml" ]; then
-                sed -i "s|image: iemafzal/easyshop-migration:.*|image: iemafzal/easyshop-migration:${imageTag}|g" ${manifestsPath}/12-migration-job.yaml
+                sed -i "s|image: .*|image: singhajay210/easyshop-migration:${imageTag}|g" ${manifestsPath}/12-migration-job.yaml
             fi
             
             # Ensure ingress is using the correct domain
             if [ -f "${manifestsPath}/10-ingress.yaml" ]; then
-                sed -i "s|host: .*|host: easyshop.letsdeployit.com|g" ${manifestsPath}/10-ingress.yaml
+                sed -i "s|host: .*|host: histinger.shop|g" ${manifestsPath}/10-ingress.yaml
             fi
             
             # Check for changes
@@ -46,8 +46,8 @@ def call(Map config = [:]) {
                 git add ${manifestsPath}/*.yaml
                 git commit -m "Update image tags to ${imageTag} and ensure correct domain [ci skip]"
                 
-                # Set up credentials for push
-                git remote set-url origin https://\${GIT_USERNAME}:\${GIT_PASSWORD}@github.com/iemafzalhassan/EasyShop-KIND.git
+                # Set up credentials for push (CORRECTED REPO URL)
+                git remote set-url origin https://\${GIT_USERNAME}:\${GIT_PASSWORD}@github.com/singhajay210208/Qualibytes-Ecommerce-Project.git
                 git push origin HEAD:\${GIT_BRANCH}
             fi
         """
